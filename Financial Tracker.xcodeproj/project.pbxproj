@@ -14,6 +14,7 @@
 		04BE308D2927DDFC0086DB11 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 04BE308C2927DDFC0086DB11 /* FirebaseAuth */; };
 		04BE308F2927DDFC0086DB11 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 04BE308E2927DDFC0086DB11 /* FirebaseFirestore */; };
 		04BE30912927DE850086DB11 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04BE30902927DE850086DB11 /* GoogleService-Info.plist */; };
+		04BE3097293410050086DB11 /* MainPageHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BE3096293410050086DB11 /* MainPageHome.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		04BE30812927D7CC0086DB11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		04BE30842927D7CC0086DB11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		04BE30902927DE850086DB11 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		04BE3096293410050086DB11 /* MainPageHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPageHome.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			children = (
 				04BE307D2927D7CB0086DB11 /* Financial_TrackerApp.swift */,
 				04BE307F2927D7CB0086DB11 /* ContentView.swift */,
+				04BE3096293410050086DB11 /* MainPageHome.swift */,
 				04BE30812927D7CC0086DB11 /* Assets.xcassets */,
 				04BE30902927DE850086DB11 /* GoogleService-Info.plist */,
 				04BE30832927D7CC0086DB11 /* Preview Content */,
@@ -153,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04BE30802927D7CB0086DB11 /* ContentView.swift in Sources */,
+				04BE3097293410050086DB11 /* MainPageHome.swift in Sources */,
 				04BE307E2927D7CB0086DB11 /* Financial_TrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

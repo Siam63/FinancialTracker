@@ -8,11 +8,19 @@
 import SwiftUI
 import Firebase
 
-struct ContentView: View {
+struct Login : View{
+    // change view state
+    @State private var showingMainPageView = false
+    
     @State private var email = ""
     @State private var password = ""
+    @State private var userIsLoggedIn = false
     
-    var body: some View {
+    var body: some View{
+        welcomePage
+    }
+    
+    var welcomePage: some View{
         ZStack{
             Color.black
             
@@ -55,7 +63,7 @@ struct ContentView: View {
                     .foregroundColor(.white)
                 
                 Button {
-                    register()
+                    // register
                 } label: {
                     Text("Sign Up")
                         .bold()
@@ -80,7 +88,15 @@ struct ContentView: View {
 
             }
             .frame(width: 350)
-            
+            .onAppear{
+                Auth.auth().addStateDidChangeListener{auth, user in
+                    
+                    if user != nil{
+                        // once logged in, turns true
+                        userIsLoggedIn.toggle()
+                    }
+                }
+            }
         }
         .ignoresSafeArea()
     }
@@ -102,6 +118,31 @@ struct ContentView: View {
                 print(error!.localizedDescription)
             }
         }
+    }
+    
+    func signout(){
+        userIsLoggedIn.toggle()
+    }
+}
+
+struct Signup : View{
+    var body: some View{
+        Text("Signup")
+    }
+}
+
+struct Home : View{
+    var body: some View{
+        VStack{
+            Login()
+        }
+    }
+}
+
+struct ContentView: View {
+    var body: some View{
+        // show main home page
+        Home()
     }
 }
 

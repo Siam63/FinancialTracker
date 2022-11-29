@@ -10,11 +10,9 @@ import Firebase
 
 @main
 struct Financial_TrackerApp: App {
-    
     init(){
         FirebaseApp.configure()
     }
-    
     
     var body: some Scene {
         WindowGroup {
