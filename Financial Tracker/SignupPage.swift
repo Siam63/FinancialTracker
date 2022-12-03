@@ -11,10 +11,12 @@ import Firebase
 struct SignupPage: View {
     // change view state
     @State private var showingMainPageView = false
+    @State var userIsLoggedIn = false
     
     @State var email = ""
     @State var password = ""
-    @State var userIsLoggedIn = false
+    @State var rePassword = ""
+    
     @State var reEnterPass = ""
     @State var visible = ""
     @State var reVisible = ""
@@ -44,6 +46,8 @@ struct SignupPage: View {
                 TextField("Email", text: $email)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
                     .placeholder(when: email.isEmpty){
                         Text("Email")
                             .foregroundColor(.white)
@@ -57,6 +61,8 @@ struct SignupPage: View {
                 SecureField("Password", text: $password)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
                     .placeholder(when: password.isEmpty){
                         Text("Password")
                             .foregroundColor(.white)
@@ -67,9 +73,12 @@ struct SignupPage: View {
                     .frame(width: 350, height: 1)
                     .foregroundColor(.white)
                 
-                SecureField("Password", text: $password)
+                // re-enter password
+                SecureField("Password", text: $rePassword)
                     .foregroundColor(.white)
                     .textFieldStyle(.plain)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
                     .placeholder(when: password.isEmpty){
                         Text("Re-Enter Password")
                             .foregroundColor(.white)
@@ -121,6 +130,13 @@ struct SignupPage: View {
 
     }
     
+    // validation helper function
+    func validateInfo(){
+        if password != rePassword{
+            print("Passwords must match!")
+        }
+    }
+    
     func login(){
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             
@@ -133,6 +149,11 @@ struct SignupPage: View {
     func register(){
         Auth.auth().createUser(withEmail: email, password: password){
             result, error in
+            
+            if password != rePassword{
+                print("Passwords must match!")
+                return
+            }
             
             if error != nil{
                 print(error!.localizedDescription)

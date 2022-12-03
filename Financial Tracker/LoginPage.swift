@@ -9,118 +9,144 @@ import SwiftUI
 import Firebase
 
 struct LoginPage: View {
+    let auth = Auth.auth()
+    
     @State private var showingMainPageView = false
+    @State private var isLoggedIn = false // initially not logged in
+    @State private var userLoggedIn = false
     
     @State var email = ""
     @State var password = ""
-    @State var userIsLoggedIn = false
-    @State var reEnterPass = ""
-    @State var visible = ""
-    @State var reVisible = ""
     
     var body: some View {
         welcomePage
     }
     
     var welcomePage: some View{
-        ZStack{
-            Color.black
+        NavigationView{
+            ZStack{
+                Color.black
+                
+                RoundedRectangle(cornerRadius: 30, style: .continuous)
+                    .foregroundStyle(.linearGradient(colors: [.pink, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 1000, height: 400)
+                    .rotationEffect(.degrees(135))
+                    .offset(y: -350)
 
-            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .foregroundStyle(.linearGradient(colors: [.pink, .blue], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .frame(width: 1000, height: 400)
-                .rotationEffect(.degrees(135))
-                .offset(y: -350)
+                VStack{
+                    Picker("", selection: $isLoggedIn) {
+                        Text("Log In")
+                            .tag(true)
+                        Text("Create an Account")
+                            .tag(false)
+                    }.pickerStyle(SegmentedPickerStyle())
+                    .padding()
 
-            VStack{
-                Text("Welcome")
-                    .foregroundColor(.white)
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .offset(x: -100, y: -100)
+                    TextField("Email", text: $email)
+                        .disableAutocorrection(true)
+                        .autocapitalization(.none)
+                        .foregroundColor(.white)
+                        .textFieldStyle(.plain)
+                        .placeholder(when: email.isEmpty){
+                            Text("Email")
+                                .foregroundColor(.white)
+                                .bold()
+                        }
 
-                TextField("Email", text: $email)
-                    .foregroundColor(.white)
-                    .textFieldStyle(.plain)
-                    .placeholder(when: email.isEmpty){
-                        Text("Email")
+                    Rectangle()
+                        .frame(width: 350, height: 1)
+                        .foregroundColor(.white)
+
+                    SecureField("Password", text: $password)
+                        .foregroundColor(.white)
+                        .textFieldStyle(.plain)
+                    
+                        .placeholder(when: password.isEmpty){
+                            Text("Password")
+                                .foregroundColor(.white)
+                                .bold()
+                        }
+
+                    Rectangle()
+                        .frame(width: 350, height: 1)
+                        .foregroundColor(.white)
+                    
+                    Button {
+                        if isLoggedIn{
+                            login()
+                        }else{
+                            signup()
+                        }
+                    } label: {
+                        Text(isLoggedIn ? "Login" : "Create Account")
+                            .bold()
+                            .frame(width: 200, height: 40)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(.linearGradient(colors: [.pink, .red], startPoint: .top, endPoint: .bottomTrailing))
+                            ).foregroundColor(.white)
+                    }
+                    .padding(.top)
+                    .offset(y: 100)
+                    
+                    if userLoggedIn {
+                        Button("Enter"){
+                            showingMainPageView.toggle()
+                        }
+                        .sheet(isPresented: $showingMainPageView){
+                            MainPageHome()
+                        }
+                    }else{
+                        Text("You are logged out. Please login.")
                             .foregroundColor(.white)
                             .bold()
                     }
-
-                Rectangle()
-                    .frame(width: 350, height: 1)
-                    .foregroundColor(.white)
-
-                SecureField("Password", text: $password)
-                    .foregroundColor(.white)
-                    .textFieldStyle(.plain)
-                    .placeholder(when: password.isEmpty){
-                        Text("Password")
-                            .foregroundColor(.white)
-                            .bold()
-                    }
-
-                Rectangle()
-                    .frame(width: 350, height: 1)
-                    .foregroundColor(.white)
-
-                Button {
-//                    login()
-                    // this is what we use to log the user in
-                } label: {
-                    Text("Log In")
-                        .bold()
-                        .frame(width: 200, height: 40)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(.linearGradient(colors: [.pink, .red], startPoint: .top, endPoint: .bottomTrailing))
-                        ).foregroundColor(.white)
+                    
                 }
-                .padding(.top)
-                .offset(y: 100)
-
-                Button {
-                    register()
-                } label: {
-                    Text("Don't have an accont? Register")
-                        .bold()
-                        .foregroundColor(.blue)
-                }
-                .padding(.top)
-                .offset(y: 100)
-
-            }
-            .frame(width: 350)
-            .onAppear{
-                Auth.auth().addStateDidChangeListener{auth, user in
-
-                    if user != nil{
-                        // once logged in, turns true
-                        userIsLoggedIn.toggle()
-                    }
-                }
-            }
-
+                .frame(width: 350)
+//                .onAppear{
+//                    Auth.auth().addStateDidChangeListener{auth, user in
+//
+//                        if user != nil{
+//                            // once logged in, turns true
+//                            isLoggedIn.toggle()
+//                        }
+//                    }
+//                }
+            }.navigationTitle(isLoggedIn ? "Welcome Back!" : "Welcome!")
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea()
     }
 
     func login(){
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-
-            if error != nil {
-                print(error!.localizedDescription)
+        auth.signIn(withEmail: email, password: password) {
+            result, error in
+            
+            if let error = error {
+                // unsuccessful
+                print("Failed due to error:", error)
+                return
             }
+            
+            // successful login
+            print("Successfully logged in with ID: \(result?.user.uid ?? "")")
+            userLoggedIn.toggle()
         }
     }
-
-    func register(){
-        Auth.auth().createUser(withEmail: email, password: password){
+    
+//
+    func signup(){
+        auth.createUser(withEmail: email, password: password){
             result, error in
-
-            if error != nil{
-                print(error!.localizedDescription)
+            
+            if let error = error {
+                // unsuccessful
+                print("Failed due to error: ", error)
+                return
             }
+            
+            // successful user creation
+            print("Successfully created account with ID: \(result?.user.uid ?? "")")
         }
     }
 
@@ -129,7 +155,7 @@ struct LoginPage: View {
     }
 
     func signout(){
-        userIsLoggedIn.toggle()
+        isLoggedIn.toggle()
     }
 }
 
@@ -138,3 +164,4 @@ struct LoginPage_Previews: PreviewProvider {
         LoginPage()
     }
 }
+
