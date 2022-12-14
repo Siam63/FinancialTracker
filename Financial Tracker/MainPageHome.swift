@@ -6,74 +6,102 @@
 //
 
 import SwiftUI
+import Firebase
+
+class PageSwitcher: ObservableObject{
+    @Published var switchPage: Bool = false
+}
 
 struct MainPageHome: View {
-    @State var monthlyExpenses = ""
-    @State var monthlyIncome = ""
-    @State var totalIncome = ""
-    @State var totalExpenses = ""
+    let auth = Auth.auth()
+    
+    // Class object initializations
+    @StateObject var logger = LoggedIn()
+    @StateObject var switcher = PageSwitcher()
+    
+    @State var groceryBudget = ""
+    @State var rentBudget = ""
+    @State var transportationBudget = ""
+    @State var otherBudget = ""
+    
+    @State var pageSwitcher: Bool = false
+    
+    // add a new budget values:
+    @State var newBudgetName = ""
+    @State var newBudgetValue = ""
+    
+    @State var showingLoginPage = false
     
     var body: some View {
-        ZStack{
-            Color.white
-            
-            VStack{
-                Text("Financial Tracker")
-                    .foregroundColor(.black)
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
-                    .offset(y: -150)
+        NavigationView{
+            ZStack{
+                Color.white
                 
-                TextField("Monthly Expenses", text: $monthlyExpenses)
-                    .padding(.all)
-                    .border(Color(UIColor.separator))
-                    .padding(.leading)
-                    .padding(.trailing)
-                
-                TextField("Monthly Income", text: $monthlyIncome)
-                    .padding(.all)
-                    .border(Color(UIColor.separator))
-                    .padding(.leading)
-                    .padding(.trailing)
-                
-                TextField("Total Income", text: $totalIncome)
-                    .padding(.all)
-                    .border(Color(UIColor.separator))
-                    .padding(.leading)
-                    .padding(.trailing)
-                
-                Rectangle()
-                    .frame(width: 350, height: 1)
-                    .foregroundColor(.black)
-
-//                TextField("Yearly Income", text: $totalIncome)
-//                    .padding(.all)
-//                    .border(Color(UIColor.separator))
-//                    .padding(.leading)
-//                    .padding(.trailing)
-
                 VStack{
-                    Text("Total Monthly Expenses: ")
+                    Text("Welcome")
+                        .foregroundColor(.black)
+                        .font(.system(size: 30, weight: .bold, design: .rounded))
                     
-                    Text("Monthly Income: ")
+                    Rectangle()
+                        .frame(width: 350, height: 1)
+                        .foregroundColor(.black)
+                        .padding(.bottom, 25)
                     
-                    Text("Yearly Income: ")
+                    Text("Welcome to your personal financial tracker. Here you can monitor your spendings and make a budget list!")
+                        .foregroundColor(.black)
+                        .font(.system(size: 20, design: .rounded))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .multilineTextAlignment(.center)
+                    
+                    VStack{
+                        HStack{
+                            NavigationLink(destination: ExpenseListView()){
+                                Text("Spendings / Expenses")
+                                    .padding(.all)
+                                    .border(Color(UIColor.separator))
+                                    .padding(.leading)
+                                    .padding(.trailing)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            
+                            NavigationLink(destination: BudgetListView()){
+                                Text("Budgeting")
+                                    .padding(.all)
+                                    .border(Color(UIColor.separator))
+                                    .padding(.leading)
+                                    .padding(.trailing)
+                            }
+                        }
+                    }
+                    
+                    NavigationLink(destination: LoginPage()){
+                        Text("Signout")
+                            .padding(.all)
+                            .border(Color(UIColor.separator))
+                            .padding(.leading)
+                            .padding(.trailing)
+                    }.simultaneousGesture(TapGesture().onEnded({
+                        signOut()
+                        showingLoginPage.toggle()
+                    }))
                 }
-                
-                Button {
-                    // Something
-                } label: {
-                    Text("+ Add Expenses")
-                        .bold()
-                        .frame(width: 200, height: 40)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(.linearGradient(colors: [.pink, .red], startPoint: .top, endPoint: .bottomTrailing))
-                        ).foregroundColor(.white)
-                }
-            }
-        }.ignoresSafeArea()
+            }.ignoresSafeArea()
+        }.navigationBarBackButtonHidden(true)
+    }
+    
+    func signOut(){
+        try? auth.signOut()
+        logger.userLoggedIn.toggle()
+    }
+    
+}
+
+struct Budgeting: View{
+    var body: some View{
+        Text("We are on the budeting page!")
     }
 }
+
 
 struct MainPageHome_Previews: PreviewProvider {
     static var previews: some View {

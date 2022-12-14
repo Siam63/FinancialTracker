@@ -12,6 +12,7 @@ import Firebase
 struct Financial_TrackerApp: App {
     init(){
         FirebaseApp.configure()
+        Auth.auth().signInAnonymously()
     }
     
     var body: some Scene {

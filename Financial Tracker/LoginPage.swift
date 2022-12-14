@@ -6,14 +6,24 @@
 //
 
 import SwiftUI
-import Firebase
+import FirebaseAuth
 
+class LoggedIn: ObservableObject{
+    @Published var userLoggedIn: Bool = false
+}
+
+class Logger: ObservableObject{
+    @Published var logged: Bool = false
+}
+
+// parent page of MainPageHome - source of truth
 struct LoginPage: View {
+    @StateObject var logger = LoggedIn()
+    
     let auth = Auth.auth()
     
-    @State private var showingMainPageView = false
-    @State private var isLoggedIn = false // initially not logged in
-    @State private var userLoggedIn = false
+    @State private var showingMainPageView: Bool = false
+    @State private var isLoggedIn: Bool = false // initially not logged in
     
     @State var email = ""
     @State var password = ""
@@ -34,6 +44,11 @@ struct LoginPage: View {
                     .offset(y: -350)
 
                 VStack{
+                    Text("Welcome")
+                        .offset(x: -110)
+                        .font(.system(size: 30, weight: .heavy, design: .default))
+                        .foregroundColor(.white)
+                    
                     Picker("", selection: $isLoggedIn) {
                         Text("Log In")
                             .tag(true)
@@ -89,13 +104,26 @@ struct LoginPage: View {
                     .padding(.top)
                     .offset(y: 100)
                     
-                    if userLoggedIn {
-                        Button("Enter"){
-                            showingMainPageView.toggle()
+                    if logger.userLoggedIn {
+                        NavigationLink(destination: MainPageHome()){
+                            Text("Enter")
+                                .padding(.all)
+                                .padding(.leading)
+                                .padding(.trailing)
+                                .frame(width: 200, height: 40)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .fill(.linearGradient(colors: [.green, .green], startPoint: .top, endPoint: .bottomTrailing))
+                                ).foregroundColor(.black)
                         }
-                        .sheet(isPresented: $showingMainPageView){
-                            MainPageHome()
-                        }
+                        
+                        
+//                        Button("Enter"){
+//                            showingMainPageView.toggle()
+//                        }
+//                        .sheet(isPresented: $showingMainPageView){
+//                            MainPageHome()
+//                        }
                     }else{
                         Text("You are logged out. Please login.")
                             .foregroundColor(.white)
@@ -104,18 +132,10 @@ struct LoginPage: View {
                     
                 }
                 .frame(width: 350)
-//                .onAppear{
-//                    Auth.auth().addStateDidChangeListener{auth, user in
-//
-//                        if user != nil{
-//                            // once logged in, turns true
-//                            isLoggedIn.toggle()
-//                        }
-//                    }
-//                }
-            }.navigationTitle(isLoggedIn ? "Welcome Back!" : "Welcome!")
+            }
+//            .navigationTitle(isLoggedIn ? "Welcome Back!" : "Welcome!")
             .ignoresSafeArea()
-        }
+        }.navigationBarBackButtonHidden(true)
     }
 
     func login(){
@@ -130,11 +150,10 @@ struct LoginPage: View {
             
             // successful login
             print("Successfully logged in with ID: \(result?.user.uid ?? "")")
-            userLoggedIn.toggle()
+            logger.userLoggedIn.toggle()
         }
     }
     
-//
     func signup(){
         auth.createUser(withEmail: email, password: password){
             result, error in

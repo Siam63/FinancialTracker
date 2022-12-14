@@ -43,33 +43,6 @@ struct Login : View{
             }
         }
     }
-
-//    func login(){
-//        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-//
-//            if error != nil {
-//                print(error!.localizedDescription)
-//            }
-//        }
-//    }
-//
-//    func register(){
-//        Auth.auth().createUser(withEmail: email, password: password){
-//            result, error in
-//
-//            if error != nil{
-//                print(error!.localizedDescription)
-//            }
-//        }
-//    }
-//
-//    func verifyContent(){
-//        // verify if username and password are not null
-//    }
-//
-//    func signout(){
-//        userIsLoggedIn.toggle()
-//    }
 }
 
 struct Home : View{
@@ -112,14 +85,7 @@ struct Home : View{
 struct ContentView: View {
     var body: some View{
         // show main home page
-        Home()
-        
-//        if userIsLoggedIn{
-//            // show main home page
-//        }else{
-//            LoginPage()
-//        }
-        
+        LoginPage()
     }
 }
 
